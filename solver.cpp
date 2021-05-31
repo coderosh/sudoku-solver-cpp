@@ -1,11 +1,23 @@
 #include <iostream>
 
-void print(int[9][9]);
-bool solveBoard(int board[9][9]);
-bool findZeroPosition(int board[9][9], int &, int &);
-bool isValid(int[9][9], int, int, int);
+using namespace std;
 
-int board[][9] = {
+void print(int[9][9]);
+bool solveBoard(int[9][9]);
+bool isValid(int[9][9], int, int, int);
+bool getEmptyPosition(int[9][9], int &, int &);
+
+const string vLine = "┃";
+const string thinVline = "│";
+
+const string borders[6] = {
+    "┏━━━┯━━━┯━━━┳━━━┯━━━┯━━━┳━━━┯━━━┯━━━┓",
+    "┣━━━┿━━━┿━━━╋━━━┿━━━┿━━━╋━━━┿━━━┿━━━┫",
+    "┠───┼───┼───╂───┼───┼───╂───┼───┼───┨",
+    "┗━━━┷━━━┷━━━┻━━━┷━━━┷━━━┻━━━┷━━━┷━━━┛",
+};
+
+int board[9][9] = {
     {0, 5, 0, 0, 0, 7, 0, 0, 8},
     {0, 0, 2, 0, 0, 0, 6, 7, 0},
     {7, 4, 1, 3, 0, 6, 2, 0, 0},
@@ -19,24 +31,25 @@ int board[][9] = {
 
 int main()
 {
-    std::cout << "\nOriginal Board: \n";
+    cout << "\nOriginal Board: \n";
     print(board);
 
-    std::cout << "\nSolved Board \n";
+    cout << "\nSolved Board \n";
 
     if (solveBoard(board))
         print(board);
     else
-        std::cout << "Couln't solve the board\n";
+        cout << "Couln't solve the board\n";
 
     return 0;
 }
 
+// solves the board
 bool solveBoard(int board[][9])
 {
     int row, col;
 
-    if (findZeroPosition(board, row, col))
+    if (!getEmptyPosition(board, row, col))
         return true;
 
     for (int i = 1; i <= 9; i++)
@@ -55,16 +68,18 @@ bool solveBoard(int board[][9])
     return false;
 }
 
-bool findZeroPosition(int board[][9], int &row, int &col)
+// gets first row and column in board where the value is 0
+bool getEmptyPosition(int board[][9], int &row, int &col)
 {
     for (row = 0; row < 9; row++)
         for (col = 0; col < 9; col++)
             if (board[row][col] == 0)
-                return false;
+                return true;
 
-    return true;
+    return false;
 }
 
+// checks if the board remains valid if board[row][col] is replaced by num
 bool isValid(int board[][9], int row, int col, int num)
 {
     // Check if row already has the number
@@ -78,50 +93,49 @@ bool isValid(int board[][9], int row, int col, int num)
             return false;
 
     // Check if the 3 x 3 box already has the number
-    int rowStart = row - row % 3;
-    int colStart = col - col % 3;
-    for (int i = 0; i < 3; i++)
-        for (int j = 0; j < 3; j++)
-            if (board[i + rowStart][j + colStart] == num)
+    int r = row - row % 3;
+    int c = col - col % 3;
+    for (int i = r; i < r + 3; i++)
+        for (int j = c; j < c + 3; j++)
+            if (board[i][j] == num)
                 return false;
 
     return true;
 }
 
+// prints the board
 void print(int board[][9])
 {
-    const std::string line = "───────";
-
     for (int i = 0; i < 9; i++)
     {
-        if (i % 3 == 0)
-            if (i != 0)
-                std::cout << "├" << line
-                          << "┼" << line
-                          << "┼" << line
-                          << "┤\n";
-            else
-                std::cout << "┌" << line
-                          << "┬" << line
-                          << "┬" << line
-                          << "┐\n";
+        if (i == 0)
+            cout << borders[0] << endl;
+        else if (i == 3 || i == 6)
+            cout << borders[1] << endl;
+        else
+            cout << borders[2] << endl;
 
         for (int j = 0; j < 9; j++)
         {
-            std::cout << (j % 3 == 0 ? "│ " : "");
+            if (j % 3 == 0)
+                cout << vLine << " ";
 
-            if (board[i][j] == 0)
-                std::cout << " ";
+            if (board[i][j] != 0)
+                cout << board[i][j];
             else
-                std::cout << board[i][j];
+                cout << " ";
 
-            std::cout << (j == 8 ? " │ \n" : " ");
+            if ((j + 1) % 3 != 0)
+                cout << " " << thinVline;
+
+            if (j == 8)
+                cout << " " << vLine
+                     << " " << endl;
+            else
+                cout << " ";
         }
 
         if (i == 8)
-            std::cout << "└" << line
-                      << "┴" << line
-                      << "┴" << line
-                      << "┘\n";
+            cout << borders[3] << endl;
     }
 }

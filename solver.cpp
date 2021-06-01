@@ -34,12 +34,12 @@ int main()
     cout << "\nOriginal Board: \n";
     print(board);
 
-    cout << "\nSolved Board \n";
+    cout << "\nSolved Board: \n";
 
     if (solveBoard(board))
         print(board);
     else
-        cout << "Couln't solve the board\n";
+        cout << "Couldn't solve the board\n";
 
     return 0;
 }
@@ -128,11 +128,10 @@ void print(int board[][9])
             if ((j + 1) % 3 != 0)
                 cout << " " << thinVline;
 
+            cout << " ";
+
             if (j == 8)
-                cout << " " << vLine
-                     << " " << endl;
-            else
-                cout << " ";
+                cout << vLine << endl;
         }
 
         if (i == 8)
